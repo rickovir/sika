@@ -1,0 +1,10 @@
+
+{
+  "type": "mysql",
+  "host": "35.240.175.76",
+  "port": 3306,
+  "username": "indi",
+  "password": "indistore",
+  "database": "sika",
+  "entities": ["dist/**/*.entity{.ts,.js}"]
+}
