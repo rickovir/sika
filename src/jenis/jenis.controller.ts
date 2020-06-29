@@ -1,4 +1,4 @@
-import { Controller, UseGuards, Get, Post, Param, Body } from '@nestjs/common';
+import { Controller, UseGuards, Get, Post, Param, Body, Response, HttpStatus } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags, ApiBody } from '@nestjs/swagger';
 import { JenisService } from './jenis.service';
 import { AuthGuard } from '@nestjs/passport';
@@ -12,23 +12,35 @@ export class JenisController {
 
     @UseGuards(AuthGuard('jwt'))
     @Get('/')
-    showAll()
+    public async showAll(@Response() res)
     {
-        return this.jenisService.findAll();
+        const query = await this.jenisService.findAll();
+        if(!query)
+            res.status(HttpStatus.BAD_GATEWAY);
+        else
+            res.status(HttpStatus.OK).json(query);
     }
 
     @UseGuards(AuthGuard('jwt'))
     @Get(':id')
-    getJenisById(@Param('id') ID:number)
+    public async getJenisById(@Response() res, @Param('id') ID:number)
     {
-        return this.jenisService.findById(ID);
+        const query = await this.jenisService.findById(ID);
+        if(!query)
+            res.status(HttpStatus.BAD_GATEWAY);
+        else
+            res.status(HttpStatus.OK).json(query);
     }
 
     @UseGuards(AuthGuard('jwt'))
     @Post('')
-    @ApiBody({type:[JenisDTO]})
-    postJenis(@Body() data:JenisDTO)
+    @ApiBody({type:JenisDTO})
+    public async postJenis(@Response() res, @Body() data:JenisDTO)
     {
-        return this.jenisService.create(data);
+        const query = await this.jenisService.create(data);
+        if(!query)
+            res.status(HttpStatus.BAD_GATEWAY);
+        else
+            res.status(HttpStatus.OK);
     }
 }

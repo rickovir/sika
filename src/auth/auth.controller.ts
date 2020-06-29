@@ -1,10 +1,10 @@
 import { Controller, Post, Response, Body, HttpStatus, UseGuards } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiTags, ApiBody } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { UsersService } from 'src/users/users.service';
 import { CreateUserDTO } from 'src/users/users.dto';
 import { AuthGuard } from '@nestjs/passport';
-import { LoginCustomerDTO } from './login.dto';
+import { LoginCustomerDTO, UserRefreshTokenDTO } from './login.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -46,4 +46,23 @@ export class AuthController {
             return res.status(HttpStatus.OK).json(token);
         }
     }
+
+    @Post('generateToken')
+    @ApiBody({type:UserRefreshTokenDTO})
+    public async generateToken(@Response() res, @Body() data:UserRefreshTokenDTO)
+    {
+        const token = await this.authService.renewToken(data);
+
+        if(!token)
+        {
+            res.status(HttpStatus.BAD_REQUEST).json({
+                message:'Token Wrong !'
+            });
+        }
+        else
+        {
+            return res.status(HttpStatus.OK).json(token);
+        }
+    }
+
 }

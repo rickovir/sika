@@ -48,9 +48,9 @@ export class PemasukanService {
         }
     }
 
-    public async createAssignedPemasukan(data:CreateTransaksiDTO):Promise<any | null>
+    public createAssignedPemasukan(data:CreateTransaksiDTO):Promise<any | null>
     {
-        return this.transaksiService.createPemasukan(data);
+        return this.transaksiService.createPemasukan(data[0]);
     }
 
     private pemasukanToRO(pemasukan:PemasukanEntity):PemasukanRO

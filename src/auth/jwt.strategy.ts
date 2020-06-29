@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException, Logger } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { Strategy, ExtractJwt } from "passport-jwt";
 import { AuthService } from "./auth.service";
+import { tokenConfig } from "src/shared/tokenConfig";
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy){
@@ -11,7 +12,7 @@ export class JwtStrategy extends PassportStrategy(Strategy){
     {
         super({
             jwtFromRequest:ExtractJwt.fromAuthHeaderAsBearerToken(),
-            secretOrKey: "SistemInformasiKasAnnawier"
+            secretOrKey: tokenConfig.secret
         })
     }
 

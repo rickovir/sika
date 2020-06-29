@@ -14,7 +14,7 @@ export class TransaksiEntity{
     @Column()
     nomorKas:string;
 
-    @Column()
+    @Column("datetime")
     tanggal:Date;
 
     @Column()
