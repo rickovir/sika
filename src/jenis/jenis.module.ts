@@ -7,6 +7,7 @@ import { JenisEntity } from './jenis.entity';
 @Module({
   imports:[TypeOrmModule.forFeature([JenisEntity])],
   controllers: [JenisController],
-  providers: [JenisService]
+  providers: [JenisService],
+  exports:[JenisService]
 })
 export class JenisModule {}

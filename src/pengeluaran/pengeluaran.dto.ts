@@ -1,7 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsString, IsDate, IsNumber } from "class-validator";
+import { CreateTransaksiDTO } from "src/transaksi/transaksi.dto";
 
-export class CreateTransaksiDTO{
+export class PengeluaranDTO{
     @ApiProperty()
     @IsString()
     nomorKas:string;
@@ -9,22 +10,22 @@ export class CreateTransaksiDTO{
     @ApiProperty()
     @IsDate()
     tanggal:Date;
-
-    @ApiProperty()
-    @IsString()
-    judul:string;
-    
-    @ApiProperty()
-    @IsString()
-    imageUrl:string;
-    
-    @ApiProperty()
-    @IsString()
-    keterangan:string;
     
     @ApiProperty()
     @IsString()
     namaPenanggungJawab:string;
+    
+    @ApiProperty()
+    @IsString()
+    judul:string;
+
+    @ApiProperty()
+    @IsString()
+    imageUrl:string;
+
+    @ApiProperty()
+    @IsString()
+    keterangan:string;
     
     @ApiProperty()
     @IsNumber()
@@ -33,4 +34,10 @@ export class CreateTransaksiDTO{
     @ApiProperty()
     @IsNumber()
     jenisID:number;
+}
+
+export class CreateAssignedPengeluaranDTO extends CreateTransaksiDTO{
+    constructor(){
+        super();
+    }
 }

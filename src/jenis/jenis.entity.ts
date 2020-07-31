@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
 import { PemasukanEntity } from "src/pemasukan/pemasukan.entity";
+import { PengeluaranEntity } from "src/pengeluaran/pengeluaran.entity";
 
 @Entity('jenis')
 export class JenisEntity{
@@ -17,4 +18,7 @@ export class JenisEntity{
 
     @OneToMany(type=>PemasukanEntity, pemasukan=>pemasukan.jenis)
     pemasukan:PemasukanEntity[];
+
+    @OneToMany(type=>PengeluaranEntity, pengeluaran=>pengeluaran.jenis)
+    pengeluaran:PengeluaranEntity[];
 }

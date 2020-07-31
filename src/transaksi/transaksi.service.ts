@@ -15,7 +15,7 @@ export class TransaksiService {
     public async createPemasukan(data:CreateTransaksiDTO)
     {
         try{
-            let query = `CALL createPemasukan('${data.jenisID}', '${data.nomorKas}', '${data.tanggal}', '${data.namaPenanggungJawab}', '${data.total}', '${data.judul}', '${data.imageUrl}', '${data.keterangan}')`;
+            let query = `CALL createPemasukan('${data.jenisID}', '${data.nomorKas}', '${data.tanggal}', '${data.namaPenanggungJawab}', '${data.jumlah}', '${data.judul}', '${data.imageUrl}', '${data.keterangan}')`;
             this.logger.log(query)
             const res = await this.transaksiRepo.query(query);
             if(res) return true;
@@ -29,7 +29,7 @@ export class TransaksiService {
     public async createPengeluaran(data:CreateTransaksiDTO)
     {
         try{
-            let query = `CALL createPengeluaran('${data.jenisID}', '${data.nomorKas}', '${data.tanggal}', '${data.namaPenanggungJawab}', '${data.total}', '${data.judul}', '${data.imageUrl}', '${data.keterangan}')`;
+            let query = `CALL createPengeluaran('${data.jenisID}', '${data.nomorKas}', '${data.tanggal}', '${data.namaPenanggungJawab}', '${data.jumlah}', '${data.judul}', '${data.imageUrl}', '${data.keterangan}')`;
             const res = await this.transaksiRepo.query(query);
             if(res)
                 return true;

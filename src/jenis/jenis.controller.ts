@@ -1,8 +1,9 @@
-import { Controller, UseGuards, Get, Post, Param, Body, Response, HttpStatus } from '@nestjs/common';
+import { Controller, UseGuards, Get, Post, Param, Body, Response, HttpStatus, Query } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags, ApiBody } from '@nestjs/swagger';
 import { JenisService } from './jenis.service';
 import { AuthGuard } from '@nestjs/passport';
 import { JenisDTO } from './jenis.dto';
+import { PageQueryDTO } from 'src/shared/master.dto';
 
 @ApiBearerAuth()
 @ApiTags('Jenis')
@@ -12,9 +13,9 @@ export class JenisController {
 
     @UseGuards(AuthGuard('jwt'))
     @Get('/')
-    public async showAll(@Response() res)
+    public async showAll(@Response() res, @Query() queryParams:PageQueryDTO)
     {
-        const query = await this.jenisService.findAll();
+        const query = await this.jenisService.findAll(queryParams);
         if(!query)
             res.status(HttpStatus.BAD_GATEWAY);
         else

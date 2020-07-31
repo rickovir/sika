@@ -1,11 +1,11 @@
 import { Entity, PrimaryGeneratedColumn, Column, BeforeInsert, ManyToOne, OneToOne } from "typeorm";
 import { JenisEntity } from "src/jenis/jenis.entity";
 
-@Entity('pemasukan')
-export class PemasukanEntity{
+@Entity('pengeluaran')
+export class PengeluaranEntity{
     @PrimaryGeneratedColumn()
     ID:number;
-
+    
     @Column()
     transaksiID:number;
 
@@ -33,6 +33,6 @@ export class PemasukanEntity{
     @Column({default:0})
     isDeleted:number;
 
-    @ManyToOne(type=>JenisEntity, jenis=>jenis.pemasukan)
+    @ManyToOne(type=>JenisEntity, jenis=>jenis.pengeluaran)
     jenis:JenisEntity;
 }

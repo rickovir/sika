@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JenisEntity } from './jenis.entity';
-import { Repository } from 'typeorm';
+import { Repository, FindManyOptions, Like } from 'typeorm';
 import { JenisDTO } from './jenis.dto';
 import { JenisRO } from './jenis.ro';
 import { clearResult } from 'src/shared/helper';
 import { clear } from 'console';
+import { IPagedResult } from 'src/shared/master.model';
+import { PageQueryDTO } from 'src/shared/master.dto';
 
 @Injectable()
 export class JenisService {
@@ -26,11 +28,29 @@ export class JenisService {
         }
     }
 
-    public async findAll():Promise<JenisRO[]>
+    public async findAll(query:PageQueryDTO):Promise<IPagedResult>
     {
-        const jenis = await this.jenisRepo.find(this.querySelection());
-        const res = jenis.map(x=>clearResult(x));
-        return res;
+        query.search = query.search ? query.search : '';
+        const option:FindManyOptions = {
+            ...this.querySelection(),
+            take:query.itemsPerPage,
+            skip:((query.page-1)*query.itemsPerPage),
+            where:[
+                { nama:Like(`%${query.search}%`) }
+            ],
+            order:{
+                ID:query.order == 1 ? 'ASC' :'DESC'
+            }
+        };
+        const [result, total] = await this.jenisRepo.findAndCount(option);
+        const data = result.map(x=>clearResult(x));
+        
+        return  <IPagedResult>{
+            currentPage:query.page,
+            totalRecords: total,
+            data:data,
+            resultPerPage:query.itemsPerPage
+        };
     }
 
     public async findById(ID:number) : Promise<JenisRO | null>{

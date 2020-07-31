@@ -1,4 +1,4 @@
-export class PemasukanRO{
+export class PengeluaranRO{
     ID?:number;
     nomorKas?:string;
     tanggal?:Date;
@@ -8,5 +8,4 @@ export class PemasukanRO{
     keterangan?:string;
     jumlah?:number;
     jenisID?:number;
-    isDraft?:boolean;
 }
