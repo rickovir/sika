@@ -6,10 +6,10 @@ export class TransaksiEntity{
     ID:number;
 
     @Column()
-    IDRef:number;
+    refID:number;
 
     @Column()
-    IDTransaksiLink:number;
+    transaksiLinkID:number;
 
     @Column()
     nomorKas:string;

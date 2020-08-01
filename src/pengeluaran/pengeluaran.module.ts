@@ -4,11 +4,13 @@ import { PengeluaranController } from './pengeluaran.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PengeluaranEntity } from './pengeluaran.entity';
 import { TransaksiModule } from 'src/transaksi/transaksi.module';
+import { JenisModule } from 'src/jenis/jenis.module';
 
 @Module({
   imports:[
     TypeOrmModule.forFeature([PengeluaranEntity]),
-    TransaksiModule
+    TransaksiModule,
+    JenisModule
   ],
   providers: [PengeluaranService],
   controllers: [PengeluaranController]
