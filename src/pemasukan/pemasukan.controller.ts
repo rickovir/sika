@@ -1,10 +1,28 @@
-import { Controller, UseGuards, Get, Param, Post, Body, Query, Response, HttpStatus, HttpException, Put } from '@nestjs/common';
+import { Controller, 
+        UseGuards, 
+        Get, 
+        Param, 
+        Post, 
+        Body, 
+        Query, 
+        Response, 
+        HttpStatus, 
+        HttpException, 
+        Put, 
+        UseInterceptors, 
+        UploadedFile, 
+        Res 
+    } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { PemasukanService } from './pemasukan.service';
 import { ApiBearerAuth, ApiTags, ApiBody, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { CreateAssignedPemasukanDTO, PemasukanDTO } from './pemasukan.dto';
 import { PageQueryDTO } from 'src/shared/master.dto';
 import { TransaksiService } from 'src/transaksi/transaksi.service';
+import { FileInterceptor } from '@nestjs/platform-express';
+
+import { diskStorage } from 'multer';
+import { editFileName, imageFileFilter } from 'src/shared/helper';
 
 @ApiBearerAuth()
 @ApiTags('Pemasukan')
@@ -81,5 +99,30 @@ export class PemasukanController {
         {
             throw new HttpException(error, HttpStatus.BAD_REQUEST);
         }
+    }
+    
+    @UseGuards(AuthGuard('jwt'))
+    @Post('upload')
+    @UseInterceptors(
+        FileInterceptor('image', {
+            storage : diskStorage({
+                destination : './uploads',
+                filename : editFileName
+            }),
+            fileFilter: imageFileFilter
+        })
+    )
+    public async uploadedFile(@UploadedFile() file)
+    {
+        const response = {
+            filename: file.filename,
+        };
+        return response;
+    }
+
+    @UseGuards(AuthGuard('jwt'))
+    @Get('image/:imgpath')
+    public async seeUploadedFile(@Res() res, @Param('imgpath') image:string) {
+        return res.sendFile(image, { root: './uploads' });
     }
 }

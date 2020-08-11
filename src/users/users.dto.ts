@@ -2,9 +2,6 @@ import { ApiProperty } from "@nestjs/swagger";
 
 export class CreateUserDTO{
     @ApiProperty()
-    readonly ID:number;
-    
-    @ApiProperty()
     readonly nama:string;
     
     @ApiProperty()
@@ -12,4 +9,12 @@ export class CreateUserDTO{
     
     @ApiProperty()
     readonly password:string;
+}
+
+export class UpdateRefreshTokenDTO{
+    @ApiProperty()
+    readonly refreshToken:string;
+
+    @ApiProperty()
+    readonly refreshTokenExpires:number;
 }

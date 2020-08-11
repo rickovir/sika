@@ -19,6 +19,12 @@ export class UserEntity{
     @Column({default: new Date()})
     createdDate:Date;
 
+    @Column()
+    refreshToken:string;
+
+    @Column()
+    refreshTokenExpires:number;
+
     @Column({ default: 0 })
     isDeleted:number;
 

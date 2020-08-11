@@ -1,4 +1,4 @@
-import { Controller, UseGuards, Get, Post, Param, Body, Response, HttpStatus, Query } from '@nestjs/common';
+import { Controller, UseGuards, Get, Post, Param, Body, Response, HttpStatus, Query, Put, HttpException } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags, ApiBody } from '@nestjs/swagger';
 import { JenisService } from './jenis.service';
 import { AuthGuard } from '@nestjs/passport';
@@ -44,4 +44,21 @@ export class JenisController {
         else
             res.status(HttpStatus.OK);
     }
+
+    @UseGuards(AuthGuard('jwt'))
+    @Put(':id')
+    @ApiBody({type:JenisDTO})
+    public async putJenis(@Response() res, @Body() data:JenisDTO, @Param('id') ID:number)
+    {
+        try{
+            const query = await this.jenisService.update(ID, data);
+            res.status(HttpStatus.OK).json(query);
+        }            
+        catch(error)
+        {
+            throw new HttpException(error, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    
 }

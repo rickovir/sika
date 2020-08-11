@@ -6,14 +6,12 @@ import { UserEntity } from 'src/users/users.entity';
 import * as jwt from 'jsonwebtoken';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
 import { UserRefreshTokenDTO } from './login.dto';
-import { tokenRO } from './login.ro';
+import { TokenRO } from './login.ro';
 import { tokenConfig } from 'src/shared/tokenConfig';
 
 @Injectable()
 export class AuthService {
     private readonly logger = new Logger(AuthService.name);
-
-    private tokenList:tokenRO[] = [];
 
     constructor(private readonly usersService:UsersService){}
 
@@ -37,7 +35,6 @@ export class AuthService {
     createToken(user:UserEntity)
     {
         const dataToken = {
-            
             ID:user.ID,
             nama:user.nama,
             username:user.username,
@@ -54,28 +51,28 @@ export class AuthService {
             {expiresIn:tokenConfig.refreshTokenLife}
         );
 
-        const response:tokenRO = {
+        const response:TokenRO = {
             accessToken,
-            expiresIn:tokenConfig.tokenLife,
             refreshToken
         };
-        
-        this.tokenList[refreshToken] = response;
+        this.usersService.updateRefreshToken(user.ID, {refreshToken, refreshTokenExpires:tokenConfig.refreshTokenLife});       
         
         return response;
     }
 
     async renewToken(userToken:UserRefreshTokenDTO)
     {
-        if(userToken.refreshToken && (userToken.refreshToken in this.tokenList))
+        const user = await this.usersService.findByRefreshToken(userToken.refreshToken);
+
+        if(user)
         {
-            const token = await jwt.verify(userToken.refreshToken, tokenConfig.refreshTokenSecret,{ maxAge:tokenConfig.refreshTokenLife.toString()});
+            const token = jwt.verify(userToken.refreshToken, tokenConfig.refreshTokenSecret);
             if(token)
             {
                 const dataToken = {
-                    ID:userToken.ID,
-                    nama:userToken.nama,
-                    username:userToken.username,
+                    ID:user.ID,
+                    nama:user.nama,
+                    username:user.username,
                 };
                 const accessToken = jwt.sign(
                     dataToken,
@@ -83,16 +80,16 @@ export class AuthService {
                     { expiresIn:tokenConfig.tokenLife }
                 );
     
-                const response = {
-                    accessToken
+                const response:TokenRO = {
+                    accessToken,
+                    refreshToken:user.refreshToken
                 };
                 
-                this.tokenList[userToken.refreshToken].accessToken = accessToken;
-    
                 return response;
             }
             
         }
+        return false;
     }
 
     async validateUserToken(payload:JwtPayload):Promise<UserEntity>

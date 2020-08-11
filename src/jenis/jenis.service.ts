@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JenisEntity } from './jenis.entity';
 import { Repository, FindManyOptions, Like } from 'typeorm';
@@ -11,6 +11,7 @@ import { PageQueryDTO } from 'src/shared/master.dto';
 
 @Injectable()
 export class JenisService {
+    private readonly logger = new Logger(JenisService.name);
     constructor(
         @InjectRepository(JenisEntity)
         private jenisRepo:Repository<JenisEntity>
@@ -69,9 +70,6 @@ export class JenisService {
     public async update(ID:number, data:Partial<JenisDTO>)
     {
         const res = await this.jenisRepo.update(ID, data);
-        if(res)
-            return true;
-        else return false;
     }  
 
     public async destroy(ID:number)

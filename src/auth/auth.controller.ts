@@ -1,4 +1,4 @@
-import { Controller, Post, Response, Body, HttpStatus, UseGuards } from '@nestjs/common';
+import { Controller, Post, Response, Body, HttpStatus, UseGuards, Query, Get } from '@nestjs/common';
 import { ApiTags, ApiBody } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { UsersService } from 'src/users/users.service';
@@ -47,9 +47,8 @@ export class AuthController {
         }
     }
 
-    @Post('generateToken')
-    @ApiBody({type:UserRefreshTokenDTO})
-    public async generateToken(@Response() res, @Body() data:UserRefreshTokenDTO)
+    @Get('generateToken')
+    public async generateToken(@Response() res, @Query() data:UserRefreshTokenDTO)
     {
         const token = await this.authService.renewToken(data);
 

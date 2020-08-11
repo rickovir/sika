@@ -19,7 +19,7 @@ import { PengeluaranModule } from './pengeluaran/pengeluaran.module';
     TypeOrmModule.forRoot(),
     ConfigModule.forRoot(),
     MulterModule.register({
-      dest:'./upload'
+      dest:'./uploads'
     }),
     AuthModule,
     UsersModule,
