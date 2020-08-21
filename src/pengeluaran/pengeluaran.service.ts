@@ -28,7 +28,8 @@ export class PengeluaranService {
             where:{
                 ...selection,
                 isDeleted:0
-            }
+            },
+            relations : ['jenis']
         }
     }
 
@@ -36,24 +37,25 @@ export class PengeluaranService {
     {
         query.search = query.search ? query.search : '';
         const option:FindManyOptions = {
-            ...this.querySelection(),
             take:query.itemsPerPage,
             skip:((query.page-1)*query.itemsPerPage),
             where:[
-                { namaPenanggungJawab:Like(`%${query.search}%`) },
-                { nomorKas:Like(`%${query.search}%`) },
-                { keterangan:Like(`%${query.search}%`) },
-                { jumlah:Like(`%${query.search}%`) },
-                { judul:Like(`%${query.search}%`) }
+                { namaPenanggungJawab:Like(`%${query.search}%`), isDeleted:0 },
+                { nomorKas:Like(`%${query.search}%`), isDeleted:0 },
+                { keterangan:Like(`%${query.search}%`), isDeleted:0 },
+                { jumlah:Like(`%${query.search}%`), isDeleted:0 },
+                { judul:Like(`%${query.search}%`), isDeleted:0 }
             ],
             order:{
                 ID:query.order == 1 ? 'ASC' :'DESC'
-            }
+            },
+            relations : ['jenis']
         };
         const [result, total] = await this.pengeluaranRepo.findAndCount(option);
+        
         const data = result.map(x=>{
             const isDraft = x.transaksiID ? false : true;
-            return clearResult({...x, ...{isDraft} });
+            return clearResult({...this.pengeluaranToRO(x), ...{isDraft} });
         });
         
         return  <IPagedResult>{
@@ -66,9 +68,10 @@ export class PengeluaranService {
 
     public async findById(ID:number) : Promise<PengeluaranRO | null>{
         const pengeluaran = await this.pengeluaranRepo.findOneOrFail(this.querySelection({ID}));
+
         const isDraft = pengeluaran.transaksiID ? false : true;
 
-        const res = <PengeluaranRO>clearResult({...pengeluaran, ...{isDraft}});
+        const res = <PengeluaranRO>clearResult({...this.pengeluaranToRO(pengeluaran), ...{isDraft}});
         return res;
     }
 
@@ -117,6 +120,17 @@ export class PengeluaranService {
             jenisID:pengeluaran.jenis ? pengeluaran.jenis.ID : null
         }
 
+        delete responseObject['jenis'];
+
         return responseObject;
+    }
+
+    public async destroy(ID:number)
+    {
+        const pengeluaranRow:PengeluaranRO = await this.findById(ID);
+        if(pengeluaranRow.isDraft)
+            await this.pengeluaranRepo.update(ID, {isDeleted:1});
+        else
+            throw new HttpException('Data yang dapat dihapus hanya draft', HttpStatus.BAD_REQUEST);
     }
 }

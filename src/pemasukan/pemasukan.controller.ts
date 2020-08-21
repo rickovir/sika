@@ -11,7 +11,8 @@ import { Controller,
         Put, 
         UseInterceptors, 
         UploadedFile, 
-        Res 
+        Res, 
+        Delete
     } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { PemasukanService } from './pemasukan.service';
@@ -106,7 +107,7 @@ export class PemasukanController {
     @UseInterceptors(
         FileInterceptor('image', {
             storage : diskStorage({
-                destination : './uploads',
+                destination : './uploads/pemasukan',
                 filename : editFileName
             }),
             fileFilter: imageFileFilter
@@ -123,6 +124,20 @@ export class PemasukanController {
     @UseGuards(AuthGuard('jwt'))
     @Get('image/:imgpath')
     public async seeUploadedFile(@Res() res, @Param('imgpath') image:string) {
-        return res.sendFile(image, { root: './uploads' });
+        return res.sendFile(image, { root: './uploads/pemasukan' });
+    }
+
+    @UseGuards(AuthGuard('jwt'))
+    @Delete(':id')
+    public async delPemasukan(@Response() res, @Param('id') ID:number)
+    {
+        try{
+            const query = await this.pemasukanService.destroy(ID);
+            res.status(HttpStatus.OK).json(query);
+        }            
+        catch(error)
+        {
+            throw new HttpException(error, HttpStatus.BAD_REQUEST);
+        }
     }
 }

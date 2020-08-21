@@ -39,15 +39,15 @@ export class TransaksiService {
     public async create(data:CreateTransaksiDTO, refID:number, successCallback:(transaksiID:number)=>void)
     {
         const latestTransaksi = await this.getLatest();
-
+        
         const jenis = await this.jenisService.findById(data.jenisID);
 
         let newSaldoSekarang= latestTransaksi.saldoSekarang;
 
         if(jenis.tipe == 'I') 
-            latestTransaksi.saldoSekarang + data.jumlah 
+            newSaldoSekarang = latestTransaksi.saldoSekarang + data.jumlah 
         else if(jenis.tipe == 'O') 
-            latestTransaksi.saldoSekarang - data.jumlah;
+            newSaldoSekarang = latestTransaksi.saldoSekarang - data.jumlah;
 
         const newTransaksi:TransaksiEntity = {
             ID:null,

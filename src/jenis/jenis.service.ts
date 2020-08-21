@@ -33,15 +33,15 @@ export class JenisService {
     {
         query.search = query.search ? query.search : '';
         const option:FindManyOptions = {
-            ...this.querySelection(),
             take:query.itemsPerPage,
             skip:((query.page-1)*query.itemsPerPage),
-            where:[
-                { nama:Like(`%${query.search}%`) }
-            ],
+            where:{ 
+                nama:Like(`%${query.search}%`),
+                isDeleted:0
+            },
             order:{
                 ID:query.order == 1 ? 'ASC' :'DESC'
-            }
+            },
         };
         const [result, total] = await this.jenisRepo.findAndCount(option);
         const data = result.map(x=>clearResult(x));
