@@ -38,11 +38,14 @@ export class JenisController {
     @ApiBody({type:JenisDTO})
     public async postJenis(@Response() res, @Body() data:JenisDTO)
     {
-        const query = await this.jenisService.create(data);
-        if(!query)
-            res.status(HttpStatus.BAD_GATEWAY);
-        else
-            res.status(HttpStatus.OK);
+        try{
+            const query = await this.jenisService.create(data);
+            res.status(HttpStatus.OK).json(query);
+        }            
+        catch(error)
+        {
+            throw new HttpException(error, HttpStatus.BAD_REQUEST);
+        }
     }
 
     @UseGuards(AuthGuard('jwt'))

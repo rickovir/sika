@@ -61,10 +61,10 @@ export class JenisService {
 
     public async create(data:JenisDTO)
     {
-        const jenis = await this.jenisRepo.save(data);
-        if(jenis)
+        const jenis = await this.jenisRepo.create(data);
+        const res = await this.jenisRepo.save(jenis);
+        if(res)
             return true;
-        else return false;
     }
 
     public async update(ID:number, data:Partial<JenisDTO>)
