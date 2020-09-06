@@ -36,7 +36,7 @@ export class AuthController {
 
         if(!user)
         {
-            res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+            res.status(HttpStatus.BAD_REQUEST).json({
                 message:'user Not Found'
             });
         }

@@ -2,7 +2,7 @@ import { Controller, UseGuards, Get, Post, Param, Body, Response, HttpStatus, Qu
 import { ApiBearerAuth, ApiTags, ApiBody } from '@nestjs/swagger';
 import { JenisService } from './jenis.service';
 import { AuthGuard } from '@nestjs/passport';
-import { JenisDTO } from './jenis.dto';
+import { JenisDTO, JenisPageQueryDTO } from './jenis.dto';
 import { PageQueryDTO } from 'src/shared/master.dto';
 
 @ApiBearerAuth()
@@ -13,7 +13,7 @@ export class JenisController {
 
     @UseGuards(AuthGuard('jwt'))
     @Get('/')
-    public async showAll(@Response() res, @Query() queryParams:PageQueryDTO)
+    public async showAll(@Response() res, @Query() queryParams:JenisPageQueryDTO)
     {
         const query = await this.jenisService.findAll(queryParams);
         if(!query)
