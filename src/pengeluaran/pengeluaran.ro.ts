@@ -8,5 +8,6 @@ export class PengeluaranRO{
     keterangan?:string;
     jumlah?:number;
     jenisID?:number;
+    jenisNama?:string;
     isDraft?:boolean;
 }

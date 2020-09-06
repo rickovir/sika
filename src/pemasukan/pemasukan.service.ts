@@ -113,7 +113,8 @@ export class PemasukanService {
     {
         const responseObject:PemasukanRO = {
             ...pemasukan,
-            jenisID:pemasukan.jenis ? pemasukan.jenis.ID : null
+            jenisID:pemasukan.jenis ? pemasukan.jenis.ID : null,
+            jenisNama:pemasukan.jenis ? pemasukan.jenis.nama : null
         }
         
         delete responseObject['jenis'];

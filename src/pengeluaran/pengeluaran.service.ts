@@ -117,7 +117,8 @@ export class PengeluaranService {
     {
         const responseObject:PengeluaranRO = {
             ...pengeluaran,
-            jenisID:pengeluaran.jenis ? pengeluaran.jenis.ID : null
+            jenisID:pengeluaran.jenis ? pengeluaran.jenis.ID : null,
+            jenisNama:pengeluaran.jenis ? pengeluaran.jenis.nama : null,
         }
 
         delete responseObject['jenis'];
