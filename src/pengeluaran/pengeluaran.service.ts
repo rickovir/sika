@@ -11,7 +11,7 @@ import { PageQueryDTO } from 'src/shared/master.dto';
 import { CreateTransaksiRO } from 'src/transaksi/transaksi.ro';
 import { exception } from 'console';
 import { JenisService } from 'src/jenis/jenis.service';
-import { PengeluaranDTO } from './pengeluaran.dto';
+import { PengeluaranDTO, CreatePengeluaranDTO } from './pengeluaran.dto';
 
 @Injectable()
 export class PengeluaranService {
@@ -83,34 +83,19 @@ export class PengeluaranService {
         else return false;
     } 
 
-    public createAssignedPengeluaran(data:CreateTransaksiDTO):Promise<any | null>
-    {
-        return this.transaksiService.createPengeluaran(data);
-    }
-
-    public async assignPengeluaranDraft(ID:number)
-    {
-        const pengeluaran = await this.findById(ID);
-        if(!pengeluaran.isDraft)  
-        {
-            throw new HttpException("Transaksi yang dapat diubah hanya transaksi jenis draft!", HttpStatus.BAD_REQUEST);
-        }      
-        this.transaksiService.create(<CreateTransaksiDTO>pengeluaran, ID, (transaksiID)=>{
-            const res = this.update(ID, {transaksiID});
-            return res;
-        });
-    }
-
-    public async createAsDraft(data:PengeluaranDTO):Promise<any | null>
+    public async create(data:CreatePengeluaranDTO)
     {
         const jenis = await this.jenisService.findById(data.jenisID);
-        const dataPemasukan = await this.pengeluaranRepo.create({...data, jenis:jenis});
-        const res = await this.pengeluaranRepo.save(dataPemasukan);
 
-        this.logger.log(dataPemasukan)
+        const transaksiPengeluaran:CreatePengeluaranDTO = {...data, jumlah:data.jumlah*-1};
 
-        if(res)
-            return true;
+        const dataPengeluaran = await this.pengeluaranRepo.create({...transaksiPengeluaran, jenis:jenis});
+
+        const pengeluaranID:number = (await this.pengeluaranRepo.save(dataPengeluaran)).ID;
+
+        const transaksiID = (await this.transaksiService.create(transaksiPengeluaran, pengeluaranID)).ID;
+
+        await this.pengeluaranRepo.update(pengeluaranID, {transaksiID});
     }
 
     private pengeluaranToRO(pengeluaran:PengeluaranEntity):PengeluaranRO
@@ -129,9 +114,10 @@ export class PengeluaranService {
     public async destroy(ID:number)
     {
         const pengeluaranRow:PengeluaranRO = await this.findById(ID);
-        if(pengeluaranRow.isDraft)
+        if(pengeluaranRow){
             await this.pengeluaranRepo.update(ID, {isDeleted:1});
-        else
-            throw new HttpException('Data yang dapat dihapus hanya draft', HttpStatus.BAD_REQUEST);
+            await this.transaksiService.delete(ID);
+        }else
+            throw new HttpException('Hanya Pengeluaran yang terdaftar saja yang dapat dihapus', HttpStatus.BAD_REQUEST);
     }
 }

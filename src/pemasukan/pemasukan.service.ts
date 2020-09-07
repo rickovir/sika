@@ -8,7 +8,7 @@ import { TransaksiService } from 'src/transaksi/transaksi.service';
 import { CreateTransaksiDTO } from 'src/transaksi/transaksi.dto';
 import { IPagedResult, IPagedQuery } from 'src/shared/master.model';
 import { PageQueryDTO } from 'src/shared/master.dto';
-import { PemasukanDTO } from './pemasukan.dto';
+import { PemasukanDTO, CreateAssignedPemasukanDTO } from './pemasukan.dto';
 import { JenisService } from 'src/jenis/jenis.service';
 
 @Injectable()
@@ -72,11 +72,6 @@ export class PemasukanService {
         return res;
     }
 
-    public createAssignedPemasukan(data:CreateTransaksiDTO):Promise<any | null>
-    {
-        return this.transaksiService.createPemasukan(data);
-    }
-
     public async update(ID:number, data:Partial<PemasukanEntity>)
     {
         const res = await this.pemasukanRepo.update(ID, data);
@@ -85,28 +80,15 @@ export class PemasukanService {
         else return false;
     } 
 
-    public async createAsDraft(data:PemasukanDTO):Promise<any | null>
+    public async create(data:CreateAssignedPemasukanDTO)
     {
         const jenis = await this.jenisService.findById(data.jenisID);
         const dataPemasukan = await this.pemasukanRepo.create({...data, jenis:jenis});
-        const res = await this.pemasukanRepo.save(dataPemasukan);
+        const pemasukanID:number = (await this.pemasukanRepo.save(dataPemasukan)).ID;
 
-        if(res)
-            return true;
-    }
+        const transaksiID = (await this.transaksiService.create(data, pemasukanID)).ID;
 
-    public async assignPemasukanDraft(ID:number)
-    {
-        const pemasukan = await this.findById(ID);
-        if(!pemasukan.isDraft)
-        {
-            throw new HttpException("Transaksi yang dapat diubah hanya transaksi jenis draft!", HttpStatus.BAD_REQUEST);
-        }
-        // this.logger.log(pemasukan.jenisID)
-        this.transaksiService.create(<CreateTransaksiDTO>pemasukan, ID, (transaksiID) => {
-            const res = this.update(ID,{transaksiID});
-            return res;
-        });
+        await this.pemasukanRepo.update(pemasukanID, {transaksiID});
     }
 
     private pemasukanToRO(pemasukan:PemasukanEntity):PemasukanRO
@@ -125,9 +107,10 @@ export class PemasukanService {
     public async destroy(ID:number)
     {
         const pemasukanRow:PemasukanRO = await this.findById(ID);
-        if(pemasukanRow.isDraft)
+        if(pemasukanRow){
             await this.pemasukanRepo.update(ID, {isDeleted:1});
-        else
-            throw new HttpException('Data yang dapat dihapus hanya draft', HttpStatus.BAD_REQUEST);
+            await this.transaksiService.delete(ID);
+        }else
+            throw new HttpException('Hanya Pemasukan yang terdaftar saja yang dapat dihapus', HttpStatus.BAD_REQUEST);
     }
 }

@@ -13,7 +13,7 @@ export class JenisDTO{
 }
 
 export class JenisPageQueryDTO extends PageQueryDTO{
-    @ApiProperty()
+    @ApiProperty({required:false})
     @IsString()
     tipe:string;
 

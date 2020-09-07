@@ -60,12 +60,12 @@ export class PemasukanController {
     }
 
     @UseGuards(AuthGuard('jwt'))
-    @Post('createAssigned')
+    @Post('create')
     @ApiBody({type:CreateAssignedPemasukanDTO})
-    public async createAssignedPemasukan(@Response() res, @Body() data:CreateAssignedPemasukanDTO)
+    public async create(@Response() res, @Body() data:CreateAssignedPemasukanDTO)
     {
         try{
-            const query = await this.transaksiService.createPemasukan(data);
+            const query = await this.pemasukanService.create(data);
             res.status(HttpStatus.OK).json(query);
         }            
         catch(error)
@@ -73,35 +73,7 @@ export class PemasukanController {
             throw new HttpException(error, HttpStatus.BAD_REQUEST);
         }
     }
-    
-    @UseGuards(AuthGuard('jwt'))
-    @Post('createAsDraft')
-    @ApiBody({type:PemasukanDTO})
-    public async createAsDraft(@Response() res, @Body() data:PemasukanDTO)
-    {        
-        try{
-            const query = await this.pemasukanService.createAsDraft(data);
-            res.status(HttpStatus.OK).json(query);
-        }            
-        catch(error)
-        {
-            throw new HttpException(error, HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @UseGuards(AuthGuard('jwt'))
-    @Put('assignDraft/:id')
-    public async assignPemasukan(@Response() res, @Param('id') ID:number){
-        try{
-            const query = await this.pemasukanService.assignPemasukanDraft(ID);
-            res.status(HttpStatus.OK).json(query);
-        }            
-        catch(error)
-        {
-            throw new HttpException(error, HttpStatus.BAD_REQUEST);
-        }
-    }
-    
+        
     @UseGuards(AuthGuard('jwt'))
     @Post('upload')
     @UseInterceptors(

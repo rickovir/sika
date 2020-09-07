@@ -9,9 +9,6 @@ export class TransaksiEntity{
     refID:number;
 
     @Column()
-    transaksiLinkID:number;
-
-    @Column()
     nomorKas:string;
 
     @Column("datetime")
@@ -19,12 +16,6 @@ export class TransaksiEntity{
 
     @Column()
     total:number;
-
-    @Column()
-    saldoSebelum:number;
-
-    @Column()
-    saldoSekarang:number;
 
     @Column({default:0})
     isDeleted:number;

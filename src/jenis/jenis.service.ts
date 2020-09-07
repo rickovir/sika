@@ -36,7 +36,7 @@ export class JenisService {
             take:query.itemsPerPage,
             skip:((query.page-1)*query.itemsPerPage),
             where:{ 
-                tipe:query.tipe,
+                tipe:query.tipe ? query.tipe : Like('%%'),
                 nama:Like(`%${query.search}%`),
                 isDeleted:0
             },
