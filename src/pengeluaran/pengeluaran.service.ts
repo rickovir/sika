@@ -54,8 +54,7 @@ export class PengeluaranService {
         const [result, total] = await this.pengeluaranRepo.findAndCount(option);
         
         const data = result.map(x=>{
-            const isDraft = x.transaksiID ? false : true;
-            return clearResult({...this.pengeluaranToRO(x), ...{isDraft} });
+            return clearResult(this.pengeluaranToRO(x));
         });
         
         return  <IPagedResult>{
@@ -69,9 +68,8 @@ export class PengeluaranService {
     public async findById(ID:number) : Promise<PengeluaranRO | null>{
         const pengeluaran = await this.pengeluaranRepo.findOneOrFail(this.querySelection({ID}));
 
-        const isDraft = pengeluaran.transaksiID ? false : true;
 
-        const res = <PengeluaranRO>clearResult({...this.pengeluaranToRO(pengeluaran), ...{isDraft}});
+        const res = <PengeluaranRO>clearResult(this.pengeluaranToRO(pengeluaran));
         return res;
     }
 

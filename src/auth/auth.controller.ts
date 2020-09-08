@@ -29,10 +29,10 @@ export class AuthController {
         return res.status(HttpStatus.OK).json(result);
     }
 
-    @UseGuards(AuthGuard('local'))
+    // @UseGuards(AuthGuard('local'))
     @Post('login')
     public async login(@Response() res, @Body() login:LoginCustomerDTO){
-        const user = await this.usersService.findByUsername(login.username);
+        const user = await this.authService.validateUser(login.username, login.password);
 
         if(!user)
         {

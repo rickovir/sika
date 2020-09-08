@@ -40,9 +40,9 @@ export class UserEntity{
         this.createdDate = new Date();
     }
 
-    async comparePassword(attempt:string):Promise<boolean>
+    comparePassword(attempt:string):boolean
     {
-        return await bcrypt.compare(attempt, this.password);
+        return bcrypt.compareSync(attempt, this.password);
     }
 
     toResponseObject(showToken:boolean = true):UserRO

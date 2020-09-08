@@ -97,17 +97,17 @@ export class AuthService {
         return await this.usersService.findById(payload.ID);
     }
 
-    async validateUser(username:string, password:string)
+    async validateUser(username:string, password:string):Promise<UserEntity>
     {
         const user = await this.usersService.findByUsername(username);
-
+        
         if(user && user.comparePassword(password))
         {
             this.logger.log('password check success');
-            const {password, ...result} = user;
 
-            return result;
+            return user;
         }
+        this.logger.log('pw salahaaaa')
 
         return null;
     }
