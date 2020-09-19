@@ -31,3 +31,8 @@ export const editFileName = (req, file, callback) => {
     .join('');
   callback(null, `${name}-${randomName}${fileExtName}`);
 };
+
+export const toSQLDate = (strDate:string) =>{
+  const newDate = new Date(strDate);
+  return newDate.toISOString().slice(0, 19).replace('T', ' ');
+}

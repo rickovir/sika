@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { PengeluaranEntity } from './pengeluaran.entity';
 import { Repository, FindManyOptions, Like } from 'typeorm';
 import { PengeluaranRO } from './pengeluaran.ro';
-import { clearResult } from 'src/shared/helper';
+import { clearResult, toSQLDate } from 'src/shared/helper';
 import { TransaksiService } from 'src/transaksi/transaksi.service';
 import { CreateTransaksiDTO } from 'src/transaksi/transaksi.dto';
 import { IPagedResult } from 'src/shared/master.model';
@@ -75,10 +75,8 @@ export class PengeluaranService {
 
     public async update(ID:number, data:Partial<PengeluaranEntity>)
     {
-        const res = await this.pengeluaranRepo.update(ID, data);
-        if(res)
-            return true;
-        else return false;
+        await this.pengeluaranRepo.update(ID, data);
+        await this.transaksiService.update(ID, <CreatePengeluaranDTO>data)
     } 
 
     public async create(data:CreatePengeluaranDTO)
@@ -87,7 +85,7 @@ export class PengeluaranService {
 
         const transaksiPengeluaran:CreatePengeluaranDTO = {...data, jumlah:data.jumlah*-1};
 
-        const dataPengeluaran = await this.pengeluaranRepo.create({...transaksiPengeluaran, jenis:jenis});
+        const dataPengeluaran = await this.pengeluaranRepo.create({...transaksiPengeluaran, tanggal: toSQLDate(data.tanggal.toString()), jenis:jenis});
 
         const pengeluaranID:number = (await this.pengeluaranRepo.save(dataPengeluaran)).ID;
 

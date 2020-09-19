@@ -1,6 +1,6 @@
 {
   "name": "sika.api",
-  "version": "0.5.13",
+  "version": "0.5.16",
   "description": "",
   "author": "",
   "private": true,
@@ -34,6 +34,7 @@
     "@types/jsonwebtoken": "^8.5.0",
     "@types/passport-local": "^1.0.33",
     "bcrypt": "^5.0.0",
+    "bcryptjs": "^2.4.3",
     "class-transformer": "^0.3.1",
     "class-validator": "^0.12.2",
     "jsonwebtoken": "^8.5.1",

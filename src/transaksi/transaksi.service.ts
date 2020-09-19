@@ -95,6 +95,19 @@ export class TransaksiService {
         return res;
     }
 
+    public async update(refID:number, data:CreateTransaksiDTO)
+    {
+        const dataTransaksi:TransaksiEntity = {
+            ID:null,
+            refID:refID,
+            nomorKas:data.nomorKas,
+            tanggal:data.tanggal,
+            total:data.jumlah,
+            isDeleted:0
+        }
+        await this.transaksiRepo.update({refID}, dataTransaksi);
+    }
+
     public async delete(refID:number)
     {
         await this.transaksiRepo.update({refID}, {isDeleted:1});

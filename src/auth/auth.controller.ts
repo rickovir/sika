@@ -1,4 +1,4 @@
-import { Controller, Post, Response, Body, HttpStatus, UseGuards, Query, Get } from '@nestjs/common';
+import { Controller, Post, Response, Body, HttpStatus, UseGuards, Query, Get, HttpException } from '@nestjs/common';
 import { ApiTags, ApiBody } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { UsersService } from 'src/users/users.service';
@@ -32,18 +32,23 @@ export class AuthController {
     // @UseGuards(AuthGuard('local'))
     @Post('login')
     public async login(@Response() res, @Body() login:LoginCustomerDTO){
-        const user = await this.authService.validateUser(login.username, login.password);
-
-        if(!user)
+        try{
+            const user = await this.authService.validateUser(login.username, login.password);
+            if(!user)
+            {
+                res.status(HttpStatus.BAD_REQUEST).json({
+                    message:'user Not Found'
+                });
+            }
+            else
+            {
+                const token = this.authService.createToken(user);
+                return res.status(HttpStatus.OK).json(token);
+            }
+        }            
+        catch(error)
         {
-            res.status(HttpStatus.BAD_REQUEST).json({
-                message:'user Not Found'
-            });
-        }
-        else
-        {
-            const token = this.authService.createToken(user);
-            return res.status(HttpStatus.OK).json(token);
+            throw new HttpException(error, HttpStatus.BAD_REQUEST);
         }
     }
 

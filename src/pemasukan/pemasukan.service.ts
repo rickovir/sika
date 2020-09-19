@@ -3,12 +3,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { PemasukanEntity } from './pemasukan.entity';
 import { Repository, FindManyOptions, Like } from 'typeorm';
 import { PemasukanRO } from './pemasukan.ro';
-import { clearResult } from 'src/shared/helper';
+import { clearResult, toSQLDate } from 'src/shared/helper';
 import { TransaksiService } from 'src/transaksi/transaksi.service';
 import { CreateTransaksiDTO } from 'src/transaksi/transaksi.dto';
 import { IPagedResult, IPagedQuery } from 'src/shared/master.model';
 import { PageQueryDTO } from 'src/shared/master.dto';
-import { PemasukanDTO, CreateAssignedPemasukanDTO } from './pemasukan.dto';
+import { PemasukanDTO, CreatePemasukanDTO } from './pemasukan.dto';
 import { JenisService } from 'src/jenis/jenis.service';
 
 @Injectable()
@@ -72,16 +72,15 @@ export class PemasukanService {
 
     public async update(ID:number, data:Partial<PemasukanEntity>)
     {
-        const res = await this.pemasukanRepo.update(ID, data);
-        if(res)
-            return true;
-        else return false;
+        await this.pemasukanRepo.update(ID, data);
+        await this.transaksiService.update(ID, <CreatePemasukanDTO>data);
     } 
 
-    public async create(data:CreateAssignedPemasukanDTO)
+    public async create(data:CreatePemasukanDTO)
     {
         const jenis = await this.jenisService.findById(data.jenisID);
-        const dataPemasukan = await this.pemasukanRepo.create({...data, jenis:jenis});
+
+        const dataPemasukan = await this.pemasukanRepo.create({...data, tanggal: toSQLDate(data.tanggal.toString()), jenis:jenis});
         const pemasukanID:number = (await this.pemasukanRepo.save(dataPemasukan)).ID;
 
         const transaksiID = (await this.transaksiService.create(data, pemasukanID)).ID;

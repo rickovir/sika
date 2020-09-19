@@ -44,12 +44,27 @@ export class PengeluaranController {
     }
 
     @UseGuards(AuthGuard('jwt'))
-    @Post('create')
+    @Post('')
     @ApiBody({type:CreatePengeluaranDTO})
     public async createPengeluaran(@Response() res, @Body() data:CreatePengeluaranDTO)
     {
         try{
             const query = await this.pengeluaranService.create(data);
+            res.status(HttpStatus.OK).json(query);
+        }            
+        catch(error)
+        {
+            throw new HttpException(error, HttpStatus.BAD_REQUEST);
+        }
+    }
+    
+    @UseGuards(AuthGuard('jwt'))
+    @Put(':id')
+    @ApiBody({type:CreatePengeluaranDTO})
+    public async update(@Response() res, @Body() data:CreatePengeluaranDTO, @Param('id') ID:number)
+    {
+        try{
+            const query = await this.pengeluaranService.update(ID, data);
             res.status(HttpStatus.OK).json(query);
         }            
         catch(error)

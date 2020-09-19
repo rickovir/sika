@@ -8,6 +8,8 @@ import { JwtPayload } from './interfaces/jwt-payload.interface';
 import { UserRefreshTokenDTO } from './login.dto';
 import { TokenRO } from './login.ro';
 import { tokenConfig } from 'src/shared/tokenConfig';
+import * as bcrypt from 'bcryptjs';
+import { throwError } from 'rxjs';
 
 @Injectable()
 export class AuthService {
@@ -100,15 +102,18 @@ export class AuthService {
     async validateUser(username:string, password:string):Promise<UserEntity>
     {
         const user = await this.usersService.findByUsername(username);
+
+        const isMatch = user ? user.comparePassword(password) : throwError('error');
         
-        if(user && user.comparePassword(password))
+        if(user && isMatch)
         {
             this.logger.log('password check success');
 
             return user;
         }
-        this.logger.log('pw salahaaaa')
+        this.logger.log('pw salahaaaa');
 
         return null;
+
     }
 }

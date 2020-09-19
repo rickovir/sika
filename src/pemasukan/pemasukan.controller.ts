@@ -17,7 +17,7 @@ import { Controller,
 import { AuthGuard } from '@nestjs/passport';
 import { PemasukanService } from './pemasukan.service';
 import { ApiBearerAuth, ApiTags, ApiBody, ApiParam, ApiQuery } from '@nestjs/swagger';
-import { CreateAssignedPemasukanDTO, PemasukanDTO } from './pemasukan.dto';
+import { CreatePemasukanDTO, PemasukanDTO } from './pemasukan.dto';
 import { PageQueryDTO } from 'src/shared/master.dto';
 import { TransaksiService } from 'src/transaksi/transaksi.service';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -60,12 +60,27 @@ export class PemasukanController {
     }
 
     @UseGuards(AuthGuard('jwt'))
-    @Post('create')
-    @ApiBody({type:CreateAssignedPemasukanDTO})
-    public async create(@Response() res, @Body() data:CreateAssignedPemasukanDTO)
+    @Post('')
+    @ApiBody({type:CreatePemasukanDTO})
+    public async create(@Response() res, @Body() data:CreatePemasukanDTO)
     {
         try{
             const query = await this.pemasukanService.create(data);
+            res.status(HttpStatus.OK).json(query);
+        }            
+        catch(error)
+        {
+            throw new HttpException(error, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @UseGuards(AuthGuard('jwt'))
+    @Put(':id')
+    @ApiBody({type:CreatePemasukanDTO})
+    public async update(@Response() res, @Body() data:CreatePemasukanDTO, @Param('id') ID:number)
+    {
+        try{
+            const query = await this.pemasukanService.update(ID, data);
             res.status(HttpStatus.OK).json(query);
         }            
         catch(error)
