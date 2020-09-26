@@ -103,17 +103,23 @@ export class AuthService {
     {
         const user = await this.usersService.findByUsername(username);
 
-        const isMatch = user ? user.comparePassword(password) : throwError('error');
+        try{
+            const isMatch = user?.comparePassword(password);
         
-        if(user && isMatch)
-        {
-            this.logger.log('password check success');
+            if(user && isMatch)
+            {
+                this.logger.log('password check success');
+    
+                return user;
+            }
+            this.logger.log('pw salahaaaa');
 
-            return user;
+            return null;
         }
-        this.logger.log('pw salahaaaa');
-
-        return null;
+        catch(error)
+        {
+            throw new HttpException(error, HttpStatus.BAD_REQUEST);
+        }
 
     }
 }

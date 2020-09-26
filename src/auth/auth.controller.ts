@@ -6,6 +6,8 @@ import { CreateUserDTO } from 'src/users/users.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { LoginCustomerDTO, UserRefreshTokenDTO } from './login.dto';
 
+import * as bcrypt from 'bcryptjs';
+
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
@@ -67,6 +69,20 @@ export class AuthController {
         {
             return res.status(HttpStatus.OK).json(token);
         }
+    }
+
+    @Post('hashtest')
+    public async hashTest(@Response() res, @Body() plain:LoginCustomerDTO){
+        try{
+            let hash = bcrypt.hashSync(plain.username, 5);
+
+            return res.status(HttpStatus.OK).json(hash);
+        }            
+        catch(error)
+        {
+            throw new HttpException(error, HttpStatus.BAD_REQUEST);
+        }
+
     }
 
 }

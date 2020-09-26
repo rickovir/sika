@@ -108,11 +108,11 @@ export class PemasukanController {
         return response;
     }
 
-    @UseGuards(AuthGuard('jwt'))
-    @Get('image/:imgpath')
-    public async seeUploadedFile(@Res() res, @Param('imgpath') image:string) {
-        return res.sendFile(image, { root: './uploads/pemasukan' });
-    }
+    // @UseGuards(AuthGuard('jwt'))
+    // @Get('image/:imgpath')
+    // public async seeUploadedFile(@Res() res, @Param('imgpath') image:string) {
+    //     return res.sendFile(image, { root: './uploads/pemasukan' });
+    // }
 
     @UseGuards(AuthGuard('jwt'))
     @Delete(':id')
