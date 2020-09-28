@@ -95,10 +95,10 @@ export class TransaksiService {
         return res;
     }
 
-    public async update(refID:number, data:CreateTransaksiDTO)
+    public async update(refID:number, transaksiID:number, data:CreateTransaksiDTO)
     {
         const dataTransaksi:TransaksiEntity = {
-            ID:null,
+            ID:transaksiID,
             refID:refID,
             nomorKas:data.nomorKas,
             tanggal:data.tanggal,

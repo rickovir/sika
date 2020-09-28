@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsString, IsDate, IsNumber } from "class-validator";
+import { IsString, IsDate, IsNumber, IsBoolean } from "class-validator";
 import { CreateTransaksiDTO } from "src/transaksi/transaksi.dto";
 
 export class PemasukanDTO{
@@ -40,4 +40,15 @@ export class CreatePemasukanDTO extends CreateTransaksiDTO{
     constructor(){
         super();
     }
+}
+
+export class UpdatePemasukanDTO extends CreateTransaksiDTO{
+    @ApiProperty()
+    @IsNumber()
+    transaksiID:number;
+
+    constructor(){
+        super();
+    }
+    
 }

@@ -41,3 +41,13 @@ export class CreatePengeluaranDTO extends CreateTransaksiDTO{
         super();
     }
 }
+
+export class UpdatePengeluaranDTO extends CreateTransaksiDTO{
+    @ApiProperty()
+    @IsNumber()
+    transaksiID:number;
+    
+    constructor(){
+        super();
+    }
+}

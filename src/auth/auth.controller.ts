@@ -71,18 +71,18 @@ export class AuthController {
         }
     }
 
-    @Post('hashtest')
-    public async hashTest(@Response() res, @Body() plain:LoginCustomerDTO){
-        try{
-            let hash = bcrypt.hashSync(plain.username, 5);
+    // @Post('hashtest')
+    // public async hashTest(@Response() res, @Body() plain:LoginCustomerDTO){
+    //     try{
+    //         let hash = bcrypt.hashSync(plain.username, 5);
 
-            return res.status(HttpStatus.OK).json(hash);
-        }            
-        catch(error)
-        {
-            throw new HttpException(error, HttpStatus.BAD_REQUEST);
-        }
+    //         return res.status(HttpStatus.OK).json(hash);
+    //     }            
+    //     catch(error)
+    //     {
+    //         throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    //     }
 
-    }
+    // }
 
 }

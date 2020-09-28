@@ -11,7 +11,7 @@ import { PageQueryDTO } from 'src/shared/master.dto';
 import { CreateTransaksiRO } from 'src/transaksi/transaksi.ro';
 import { exception } from 'console';
 import { JenisService } from 'src/jenis/jenis.service';
-import { PengeluaranDTO, CreatePengeluaranDTO } from './pengeluaran.dto';
+import { PengeluaranDTO, CreatePengeluaranDTO, UpdatePengeluaranDTO } from './pengeluaran.dto';
 
 @Injectable()
 export class PengeluaranService {
@@ -67,16 +67,19 @@ export class PengeluaranService {
 
     public async findById(ID:number) : Promise<PengeluaranRO | null>{
         const pengeluaran = await this.pengeluaranRepo.findOneOrFail(this.querySelection({ID}));
-
-
         const res = <PengeluaranRO>clearResult(this.pengeluaranToRO(pengeluaran));
         return res;
     }
 
-    public async update(ID:number, data:Partial<PengeluaranEntity>)
+    public async update(ID:number, data:Partial<UpdatePengeluaranDTO>)
     {
+        const jenis = await this.jenisService.findById(data.jenisID);
+
+        const dataPemasukan = await this.pengeluaranRepo.create({...data, jenis:jenis});
+
         await this.pengeluaranRepo.update(ID, data);
-        await this.transaksiService.update(ID, <CreatePengeluaranDTO>data)
+
+        await this.transaksiService.update(ID, data.transaksiID, <CreatePengeluaranDTO>data);
     } 
 
     public async create(data:CreatePengeluaranDTO)
@@ -85,7 +88,7 @@ export class PengeluaranService {
 
         const transaksiPengeluaran:CreatePengeluaranDTO = {...data, jumlah:data.jumlah*-1};
 
-        const dataPengeluaran = await this.pengeluaranRepo.create({...transaksiPengeluaran, tanggal: toSQLDate(data.tanggal.toString()), jenis:jenis});
+        const dataPengeluaran = await this.pengeluaranRepo.create({...transaksiPengeluaran, jenis:jenis});
 
         const pengeluaranID:number = (await this.pengeluaranRepo.save(dataPengeluaran)).ID;
 

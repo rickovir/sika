@@ -8,8 +8,9 @@ import { TransaksiService } from 'src/transaksi/transaksi.service';
 import { CreateTransaksiDTO } from 'src/transaksi/transaksi.dto';
 import { IPagedResult, IPagedQuery } from 'src/shared/master.model';
 import { PageQueryDTO } from 'src/shared/master.dto';
-import { PemasukanDTO, CreatePemasukanDTO } from './pemasukan.dto';
+import { PemasukanDTO, CreatePemasukanDTO, UpdatePemasukanDTO } from './pemasukan.dto';
 import { JenisService } from 'src/jenis/jenis.service';
+import { JenisEntity } from 'src/jenis/jenis.entity';
 
 @Injectable()
 export class PemasukanService {
@@ -70,17 +71,22 @@ export class PemasukanService {
         return res;
     }
 
-    public async update(ID:number, data:Partial<PemasukanEntity>)
+    public async update(ID:number, data:Partial<UpdatePemasukanDTO>)
     {
-        await this.pemasukanRepo.update(ID, data);
-        await this.transaksiService.update(ID, <CreatePemasukanDTO>data);
+        const jenis = <JenisEntity>(await this.jenisService.findById(data.jenisID));
+
+        const dataPemasukan = await this.pemasukanRepo.create({...data, jenis:jenis});
+
+        await this.pemasukanRepo.update(ID, dataPemasukan);
+
+        await this.transaksiService.update(ID, data.transaksiID, <CreatePemasukanDTO>data);
     } 
 
     public async create(data:CreatePemasukanDTO)
     {
         const jenis = await this.jenisService.findById(data.jenisID);
 
-        const dataPemasukan = await this.pemasukanRepo.create({...data, tanggal: toSQLDate(data.tanggal.toString()), jenis:jenis});
+        const dataPemasukan = await this.pemasukanRepo.create({...data, jenis:jenis});
         const pemasukanID:number = (await this.pemasukanRepo.save(dataPemasukan)).ID;
 
         const transaksiID = (await this.transaksiService.create(data, pemasukanID)).ID;
