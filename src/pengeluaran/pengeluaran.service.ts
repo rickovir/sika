@@ -75,12 +75,14 @@ export class PengeluaranService {
     {
         const jenis = await this.jenisService.findById(data.jenisID);
 
-        const dataPemasukan = await this.pengeluaranRepo.create({...data, jenis:jenis});
+        const transaksiPengeluaran = {...data, jumlah:data.jumlah*-1};
 
-        await this.pengeluaranRepo.update(ID, data);
+        const dataPengeluaran = await this.pengeluaranRepo.create({...transaksiPengeluaran, jenis:jenis});
 
-        await this.transaksiService.update(ID, data.transaksiID, <CreatePengeluaranDTO>data);
-    } 
+        await this.pengeluaranRepo.update(ID, dataPengeluaran);
+
+        await this.transaksiService.update(ID, data.transaksiID, <CreatePengeluaranDTO>transaksiPengeluaran);
+    }
 
     public async create(data:CreatePengeluaranDTO)
     {
@@ -103,6 +105,7 @@ export class PengeluaranService {
             ...pengeluaran,
             jenisID:pengeluaran.jenis ? pengeluaran.jenis.ID : null,
             jenisNama:pengeluaran.jenis ? pengeluaran.jenis.nama : null,
+            jumlah:pengeluaran.jumlah*-1
         }
 
         delete responseObject['jenis'];

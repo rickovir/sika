@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsString, IsDate, IsNumber } from "class-validator";
+import { PageQueryDTO } from "src/shared/master.dto";
 
 export class CreateTransaksiDTO{
     @ApiProperty()
@@ -33,4 +34,15 @@ export class CreateTransaksiDTO{
     @ApiProperty()
     @IsNumber()
     jenisID:number;
+}
+
+export class TransaksiPageQueryDTO extends PageQueryDTO{
+    @ApiProperty({required:false})
+    @IsString()
+    dateRange:string[];
+
+    constructor()
+    {
+        super();
+    }
 }

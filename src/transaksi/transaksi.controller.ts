@@ -4,6 +4,7 @@ import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { clearResult } from 'src/shared/helper';
 import { PageQueryDTO } from 'src/shared/master.dto';
+import { TransaksiPageQueryDTO } from './transaksi.dto';
 
 @ApiBearerAuth()
 @ApiTags('Transaksi')
@@ -13,7 +14,7 @@ export class TransaksiController {
 
     @UseGuards(AuthGuard('jwt'))
     @Get('/')
-    public async showAll(@Response() res, @Query() queryParams:PageQueryDTO)
+    public async showAll(@Response() res, @Query() queryParams:TransaksiPageQueryDTO)
     {
         const query = await this.transaksiService.findAll(queryParams);
         if(!query)

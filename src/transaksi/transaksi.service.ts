@@ -2,10 +2,11 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TransaksiEntity } from './transaksi.entity';
 import { Repository } from 'typeorm';
-import { CreateTransaksiDTO } from './transaksi.dto';
+import { CreateTransaksiDTO, TransaksiPageQueryDTO } from './transaksi.dto';
 import { JenisService } from 'src/jenis/jenis.service';
 import { PageQueryDTO } from 'src/shared/master.dto';
 import { IPagedQuery, IPagedResult } from 'src/shared/master.model';
+import { toSQLDate } from 'src/shared/helper';
 
 @Injectable()
 export class TransaksiService {
@@ -16,9 +17,14 @@ export class TransaksiService {
         private jenisService:JenisService
     ){}
 
-    public async findAll(pageQuery:PageQueryDTO):Promise<IPagedResult>
+    public async findAll(pageQuery:TransaksiPageQueryDTO):Promise<IPagedResult>
     {
         let offset:number = ((pageQuery.page-1)*pageQuery.itemsPerPage);
+        let dateRangeQuery = pageQuery.dateRange ? `
+        AND
+            BETWEEN '${toSQLDate(pageQuery.dateRange[1])}' AND '${toSQLDate(pageQuery.dateRange[0])}'
+        `:'';
+
         let query:string = 
         `SELECT 
             transaksi.ID,
@@ -40,6 +46,7 @@ export class TransaksiService {
             pengeluaran.transaksiID = transaksi.ID
         WHERE 
             transaksi.isDeleted = 0
+        ${dateRangeQuery}
         ORDER BY 
             transaksi.ID
         DESC
@@ -105,6 +112,7 @@ export class TransaksiService {
             total:data.jumlah,
             isDeleted:0
         }
+
         await this.transaksiRepo.update({refID}, dataTransaksi);
     }
 
