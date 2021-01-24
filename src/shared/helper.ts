@@ -23,7 +23,7 @@ export const imageFileFilter = (req, file, callback) => {
 export const editFileName = (req, file, callback) => {
   String.prototype
   let name:string = file.originalname.split('.')[0];
-  name = name.split(" ").toString();
+  name = name.replace(/\W/g, '');
   const fileExtName = extname(file.originalname);
   const randomName = Array(4)
     .fill(null)
@@ -31,3 +31,8 @@ export const editFileName = (req, file, callback) => {
     .join('');
   callback(null, `${name}-${randomName}${fileExtName}`);
 };
+
+export const toSQLDate = (strDate:string) =>{
+  const newDate = new Date(strDate);
+  return newDate.toISOString().slice(0, 19).replace('T', ' ');
+}

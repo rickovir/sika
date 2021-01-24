@@ -36,7 +36,17 @@ export class PengeluaranDTO{
     jenisID:number;
 }
 
-export class CreateAssignedPengeluaranDTO extends CreateTransaksiDTO{
+export class CreatePengeluaranDTO extends CreateTransaksiDTO{
+    constructor(){
+        super();
+    }
+}
+
+export class UpdatePengeluaranDTO extends CreateTransaksiDTO{
+    @ApiProperty()
+    @IsNumber()
+    transaksiID:number;
+    
     constructor(){
         super();
     }

@@ -13,6 +13,7 @@ import { PemasukanModule } from './pemasukan/pemasukan.module';
 import { JenisModule } from './jenis/jenis.module';
 import { TransaksiModule } from './transaksi/transaksi.module';
 import { PengeluaranModule } from './pengeluaran/pengeluaran.module';
+import { OtherModule } from './other/other.module';
 
 @Module({
   imports: [
@@ -26,7 +27,8 @@ import { PengeluaranModule } from './pengeluaran/pengeluaran.module';
     PemasukanModule,
     JenisModule,
     TransaksiModule,
-    PengeluaranModule
+    PengeluaranModule,
+    OtherModule
   ],
   controllers: [AppController],
   providers: [

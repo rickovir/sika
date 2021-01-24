@@ -2,7 +2,7 @@ import { Controller, UseGuards, Get, Param, Post, Body, Query, Response, HttpSta
 import { AuthGuard } from '@nestjs/passport';
 import { PengeluaranService } from './pengeluaran.service';
 import { ApiBearerAuth, ApiTags, ApiBody } from '@nestjs/swagger';
-import { CreateAssignedPengeluaranDTO, PengeluaranDTO } from './pengeluaran.dto';
+import { CreatePengeluaranDTO, PengeluaranDTO } from './pengeluaran.dto';
 import { PageQueryDTO } from 'src/shared/master.dto';
 import { TransaksiService } from 'src/transaksi/transaksi.service';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -44,12 +44,12 @@ export class PengeluaranController {
     }
 
     @UseGuards(AuthGuard('jwt'))
-    @Post('CreateAssigned')
-    @ApiBody({type:CreateAssignedPengeluaranDTO})
-    public async createAssignedPengeluaran(@Response() res, @Body() data:CreateAssignedPengeluaranDTO)
+    @Post('')
+    @ApiBody({type:CreatePengeluaranDTO})
+    public async createPengeluaran(@Response() res, @Body() data:CreatePengeluaranDTO)
     {
         try{
-            const query = await this.transaksiService.createPengeluaran(data);
+            const query = await this.pengeluaranService.create(data);
             res.status(HttpStatus.OK).json(query);
         }            
         catch(error)
@@ -59,25 +59,12 @@ export class PengeluaranController {
     }
     
     @UseGuards(AuthGuard('jwt'))
-    @Post('createAsDraft')
-    @ApiBody({type:PengeluaranDTO})
-    public async createAsDraft(@Response() res, @Body() data:PengeluaranDTO)
-    {        
+    @Put(':id')
+    @ApiBody({type:CreatePengeluaranDTO})
+    public async update(@Response() res, @Body() data:CreatePengeluaranDTO, @Param('id') ID:number)
+    {
         try{
-            const query = await this.pengeluaranService.createAsDraft(data);
-            res.status(HttpStatus.OK).json(query);
-        }            
-        catch(error)
-        {
-            throw new HttpException(error, HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @UseGuards(AuthGuard('jwt'))
-    @Put('assignDraft/:id')
-    public async assignPengeluaran(@Response() res, @Param('id') ID:number){
-        try{
-            const query = await this.pengeluaranService.assignPengeluaranDraft(ID);
+            const query = await this.pengeluaranService.update(ID, data);
             res.status(HttpStatus.OK).json(query);
         }            
         catch(error)
@@ -105,11 +92,11 @@ export class PengeluaranController {
         return response;
     }
 
-    @UseGuards(AuthGuard('jwt'))
-    @Get('image/:imgpath')
-    public async seeUploadedFile(@Res() res, @Param('imgpath') image:string) {
-        return res.sendFile(image, { root: './uploads/pengeluaran' });
-    }
+    // @UseGuards(AuthGuard('jwt'))
+    // @Get('image/:imgpath')
+    // public async seeUploadedFile(@Res() res, @Param('imgpath') image:string) {
+    //     return res.sendFile(image, { root: './uploads/pengeluaran' });
+    // }
 
     @UseGuards(AuthGuard('jwt'))
     @Delete(':id')

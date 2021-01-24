@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, BeforeInsert } from 'typeorm';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { UserRO } from './users.ro';
 
 @Entity('user')
@@ -29,9 +29,10 @@ export class UserEntity{
     isDeleted:number;
 
     @BeforeInsert()
-    async hashPassword()
+    hashPassword()
     {
-        this.password = await bcrypt.hash(this.password,10);
+        var salt = bcrypt.genSaltSync(10);
+        this.password = bcrypt.hashSync(this.password, salt);
     }
 
     @BeforeInsert()
@@ -40,9 +41,9 @@ export class UserEntity{
         this.createdDate = new Date();
     }
 
-    async comparePassword(attempt:string):Promise<boolean>
+    comparePassword(attempt:string):boolean
     {
-        return await bcrypt.compare(attempt, this.password);
+        return bcrypt.compareSync(attempt,this.password);
     }
 
     toResponseObject(showToken:boolean = true):UserRO

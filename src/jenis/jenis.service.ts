@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JenisEntity } from './jenis.entity';
 import { Repository, FindManyOptions, Like } from 'typeorm';
-import { JenisDTO } from './jenis.dto';
+import { JenisDTO, JenisPageQueryDTO } from './jenis.dto';
 import { JenisRO } from './jenis.ro';
 import { clearResult } from 'src/shared/helper';
 import { clear } from 'console';
@@ -29,13 +29,14 @@ export class JenisService {
         }
     }
 
-    public async findAll(query:PageQueryDTO):Promise<IPagedResult>
+    public async findAll(query:JenisPageQueryDTO):Promise<IPagedResult>
     {
         query.search = query.search ? query.search : '';
         const option:FindManyOptions = {
             take:query.itemsPerPage,
             skip:((query.page-1)*query.itemsPerPage),
             where:{ 
+                tipe:query.tipe ? query.tipe : Like('%%'),
                 nama:Like(`%${query.search}%`),
                 isDeleted:0
             },
@@ -53,6 +54,7 @@ export class JenisService {
             resultPerPage:query.itemsPerPage
         };
     }
+    
 
     public async findById(ID:number) : Promise<JenisRO | null>{
         const res = <JenisRO>clearResult( await this.jenisRepo.findOneOrFail(this.querySelection({ID})));
