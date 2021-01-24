@@ -56,7 +56,7 @@ export class PemasukanService {
             return clearResult(this.pemasukanToRO(x));
         });
         
-        return  <IPagedResult>{
+        return  <any>{
             currentPage:query.page,
             totalRecords: total,
             data:data,
