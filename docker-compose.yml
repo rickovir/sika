@@ -1,12 +1,12 @@
 version: '3.7'
 
 services:
-  main:
+  backend:
     image: rivnd/backend:dev
-    container_name: main
-    restart: always
+    container_name: backend
+    restart: 
+      on-failure
     volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules
+      - .:/usr/src/app/backend
     ports:
       - "4000:4000"
